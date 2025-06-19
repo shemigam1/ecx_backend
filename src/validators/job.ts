@@ -13,10 +13,10 @@ export const updateJobValidator = Joi.object<IUpdateJob>({
     salary: Joi.number(),
     yearsOfExperience: Joi.number(),
     employerId: Joi.string().alphanum().required(),
-    jobId: Joi.string().alphanum().required()
+    jobId: Joi.string().alphanum()
 })
 
 export const getJobValidator = Joi.object<IGetJob>({
     employerId: Joi.string().alphanum().required(),
-    jobId: Joi.string().alphanum().required()
+    jobId: Joi.string().alphanum()
 })

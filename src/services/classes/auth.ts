@@ -42,6 +42,7 @@ class Auth {
 					user: {
 						email,
 						name: user.name,
+						role: user.role
 					},
 				};
 				return ResultFunction(
@@ -79,12 +80,13 @@ class Auth {
 
 	public async signup(input: ISignup) {
 		try {
-			const { name, email, password } = input;
+			const { name, email, password, role } = input;
 			const data: SignupData = {
 				user: {
 					name,
 					email,
 					password,
+					role
 				},
 			};
 

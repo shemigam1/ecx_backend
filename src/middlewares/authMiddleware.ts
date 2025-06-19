@@ -42,12 +42,14 @@ const authMiddleWare = async (
 		// check how JsonWebTokenError is handled in error handler
 		return next(payload);
 	}
+	console.log(payload);
 
-	const id = (payload as JwtPayload).id;
+
+	const id = (payload as JwtPayload)._id;
 	// find user and add to res object
 	const user = await User.findById(id);
 	res.locals.user = user;
-
+	console.log(user);
 	next();
 };
 
@@ -57,6 +59,8 @@ export const checkAdmin = async (
 	next: NextFunction
 ) => {
 	const user = res.locals.user
+	console.log(user);
+
 
 	if (!user) {
 		const response = ResultFunction(

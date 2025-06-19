@@ -115,7 +115,7 @@ class Job {
                 'job updated successful',
                 200,
                 ReturnStatus.OK,
-                updatedJob
+                data
             )
 
 

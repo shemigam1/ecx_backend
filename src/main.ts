@@ -6,7 +6,7 @@ import errorHandler from './middlewares/errorHandler';
 
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8088;
 
 app.use(cors());
 
