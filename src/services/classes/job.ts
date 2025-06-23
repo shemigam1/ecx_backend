@@ -1,7 +1,7 @@
 import { ResultFunction } from "../../helpers/utils"
 import JobSchema from "../../models/job"
 import { ReturnStatus } from "../../types/generic"
-import { ICreateJob, IGetJob, IUpdateJob } from "../../types/job"
+import { ICreateJob, IGetJob, ISearch, IUpdateJob } from "../../types/job"
 
 class Job {
 
@@ -19,6 +19,60 @@ class Job {
                 ReturnStatus.OK,
                 jobs
             )
+        } catch (error) {
+            return ResultFunction(
+                false,
+                'couldnt get jobs',
+                422,
+                ReturnStatus.NOT_OK,
+                null
+            );
+        }
+    }
+
+    public async searchJobs(input: ISearch) {
+        try {
+            const { sortBy, sortOrder, page, limit } = input
+            let sort = -1
+            if (sortOrder === 'asc') {
+                sort = 1
+            }
+            const totalJobs = await JobSchema.countDocuments()
+            let jobs
+            if (sortBy === 'location') {
+                jobs = await JobSchema.find({ location: sortBy }).limit(limit * 1).skip((page - 1) * limit)
+            } else if (sortBy === 'jobType') {
+                jobs = await JobSchema.find({ jobType: sortBy }).limit(limit * 1).skip((page - 1) * limit)
+            }
+
+            jobs = await JobSchema.find({}).limit(limit * 1).skip((page - 1) * limit).sort({ sortBy: sort as 1 | -1 })
+            if (jobs.length === 0) {
+                return ResultFunction(
+                    false,
+                    'no jobs found',
+                    404,
+                    ReturnStatus.NOT_OK,
+                    null
+                );
+            }
+
+            const data = {
+                ...jobs,
+                currentPage: page,
+                totalPages: Math.ceil(totalJobs / limit),
+                totalJobs: totalJobs,
+                sortBy: sortBy,
+                sortOrder: sortOrder
+            }
+
+            return ResultFunction(
+                true,
+                'Job returned sucessfully!',
+                200,
+                ReturnStatus.OK,
+                data
+            )
+
         } catch (error) {
             return ResultFunction(
                 false,
