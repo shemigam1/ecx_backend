@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ICreateJob, IGetJob, ISearch, IUpdateJob } from '../types/job';
+import { ApplicationData, IApplication, ICreateJob, IGetJob, ISearch, IUpdateJob, JobData } from '../types/job';
 import { jobFactory } from '../services/factories';
 import { ReturnStatus } from '../types/generic';
 import { ResultFunction } from '../helpers/utils';
@@ -34,14 +34,14 @@ export const createJobController = async (
     res: Response,
     next: NextFunction
 ) => {
-    const input: ICreateJob = {
+    const input: JobData = {
         position: req.body.position,
         jobType: req.body.jobType,
         minSalary: req.body.minSalary,
         maxSalary: req.body.maxSalary,
         location: req.body.location,
         yearsOfExperience: req.body.yearsOfExperience,
-        employerId: req.body.employerId
+        employerId: req.body.employerId,
     }
 
     const response = await jobFactory().createJob(input)
@@ -108,6 +108,29 @@ export const updateJobController = async (
     }
 
     const response = await jobFactory().updateJob(input)
+    return res.status(response.code).json(response);
+}
+
+export const applyJobController = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const file = req.file as Express.Multer.File;
+
+    if (!file) {
+        res.status(400).json({ error: 'No document files provided' });
+        return;
+    }
+    const input: ApplicationData = {
+        jobId: req.params.id,
+        applicantId: req.body.applicantId,
+        cvPath: req.body.cvPath,
+        coverLetter: req.body.coverLetter,
+        cvData: file.buffer,
+    }
+
+    const response = await jobFactory().apply(input)
     return res.status(response.code).json(response);
 }
 

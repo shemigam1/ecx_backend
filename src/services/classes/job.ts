@@ -1,7 +1,10 @@
+import { application } from "express"
 import { ResultFunction } from "../../helpers/utils"
+import Application from "../../models/application"
+import ApplicationSchema from "../../models/application"
 import JobSchema from "../../models/job"
 import { ReturnStatus } from "../../types/generic"
-import { ICreateJob, IGetJob, ISearch, IUpdateJob } from "../../types/job"
+import { ApplicationData, ICreateJob, IGetJob, ISearch, IUpdateJob, JobData } from "../../types/job"
 
 class Job {
 
@@ -125,7 +128,7 @@ class Job {
             );
         }
     }
-    public async createJob(input: ICreateJob) {
+    public async createJob(input: JobData) {
         try {
             const newJob = await JobSchema.create(input)
 
@@ -210,6 +213,54 @@ class Job {
             )
 
 
+        } catch (error) {
+            return ResultFunction(
+                false,
+                'something went wrong',
+                422,
+                ReturnStatus.NOT_OK,
+                null
+            );
+        }
+    }
+
+    public async apply(input: ApplicationData) {
+        try {
+            const { jobId, applicantId } = input
+
+            const existingApplication = await Application.findOne({ jobId, applicantId })
+
+            if (existingApplication) {
+
+                return ResultFunction(
+                    false,
+                    'you have already applied for this job',
+                    422,
+                    ReturnStatus.NOT_OK,
+                    null
+                );
+            }
+
+            const newApplication = await Application.create(input)
+
+            if (!newApplication) {
+
+                return ResultFunction(
+                    false,
+                    'something went wrong',
+                    422,
+                    ReturnStatus.NOT_OK,
+                    null
+                );
+            }
+
+            return ResultFunction(
+                true,
+                'application created successful',
+                200,
+                ReturnStatus.OK,
+                newApplication
+            )
         } catch (error) {
             return ResultFunction(
                 false,

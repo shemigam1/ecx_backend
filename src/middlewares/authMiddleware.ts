@@ -73,7 +73,41 @@ export const checkAdmin = async (
 		return res.status(response.code).json(response);
 	}
 
-	if (user.role !== 'admin') {
+	if (user.role !== 'employer') {
+		const response = ResultFunction(
+			false,
+			'forbidden forest!',
+			403,
+			ReturnStatus.UNAUTHORIZED,
+			null
+		);
+		return res.status(response.code).json(response);
+	}
+
+	next();
+}
+
+export const checkUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const user = res.locals.user
+	console.log(user);
+
+
+	if (!user) {
+		const response = ResultFunction(
+			false,
+			'User not authenticated',
+			401,
+			ReturnStatus.UNAUTHORIZED,
+			null
+		);
+		return res.status(response.code).json(response);
+	}
+
+	if (user.role !== 'user') {
 		const response = ResultFunction(
 			false,
 			'forbidden forest!',

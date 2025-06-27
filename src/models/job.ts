@@ -10,7 +10,8 @@ const JobSchemaModel: Schema = new Schema<ICreateJob>({
   maxSalary: { type: Number, required: true },
   location: { type: String, required: true },
   yearsOfExperience: { type: Number, required: true },
-  employerId: { type: Schema.Types.ObjectId, required: true, ref: "User" }
+  employerId: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+  createdAt: { type: Date, default: Date.now },
 
 })
 
